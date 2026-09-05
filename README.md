@@ -176,7 +176,9 @@ Python 3.12, FastAPI, SQLite via SQLAlchemy, server-rendered Jinja2 with HTMX.
 One container. No build step, no queues, no Kubernetes, no cloud dependencies.
 
 The design decisions and their trade-offs are in
-**[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+**[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**. If you are picking this
+repository up to work on it — or pointing a coding agent at it — start with
+**[docs/HANDOFF.md](docs/HANDOFF.md)**.
 
 ---
 
@@ -192,5 +194,5 @@ rolegraph/web/        routes, view models, templates
 data/demo/            the synthetic Contoso tenant
 scripts/              demo dataset generator
 tests/                pytest suite
-docs/                 BRIEF, IMPORT_SCHEMA, ARCHITECTURE
+docs/                 BRIEF, IMPORT_SCHEMA, ARCHITECTURE, HANDOFF
 ```

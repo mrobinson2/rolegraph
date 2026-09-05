@@ -1,0 +1,29 @@
+{% from "partials/macros.html" import principal_link, role_link, severity_badge %}
+{% if not findings %}
+  <div class="empty">No findings match this filter.</div>
+{% endif %}
+{% for finding in findings %}
+<article class="finding {{ finding.severity | severity_class }}">
+  <div class="head">
+    {{ severity_badge(finding.severity) }}
+    <strong>{{ finding.title }}</strong>
+    <span class="rule-id">{{ finding.rule_id }}</span>
+  </div>
+  <p class="what">{{ finding.what }}</p>
+  <p class="why">{{ finding.why }}</p>
+  <div class="chips">
+    {% if finding.principal %}<span class="chip">Identity: {{ principal_link(finding.principal) }}</span>{% endif %}
+    {% if finding.role %}<span class="chip">Role: {{ role_link(finding.role) }}</span>{% endif %}
+    {% if finding.scope_display %}<span class="chip">Scope: {{ finding.scope_display }}</span>{% endif %}
+    {% if finding.paths %}
+      {% set p = finding.paths[0] %}
+      <a class="chip" href="/identities/{{ p.principal.id }}/path/{{ p.assignment.id }}?chain={{ p.membership_chain | join('>') }}">See the access path</a>
+    {% endif %}
+  </div>
+  {% if finding.evidence %}
+  <ul class="evidence">
+    {% for item in finding.evidence %}<li>{{ item }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</article>
+{% endfor %}

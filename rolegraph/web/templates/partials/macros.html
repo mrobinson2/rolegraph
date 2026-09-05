@@ -1,0 +1,37 @@
+{% macro principal_badge(principal) -%}
+  {%- if principal -%}
+    {%- set cls = {'user':'user','group':'group','servicePrincipal':'app','managedIdentity':'identity'}[principal.type.value] -%}
+    <span class="badge {{ cls }}">{{ principal.type_label }}</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro principal_link(principal, fallback='') -%}
+  {%- if principal -%}
+    <a href="/identities/{{ principal.id }}">{{ principal.display_name }}</a>
+  {%- else -%}
+    <span class="muted">{{ fallback }}</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro role_link(role) -%}
+  {%- if role -%}<a href="/roles/{{ role.id | urlencode }}">{{ role.name }}</a>{%- endif -%}
+{%- endmacro %}
+
+{% macro scope_link(scope, label) -%}
+  <a href="/scopes?scope={{ scope | urlencode }}">{{ label }}</a>
+{%- endmacro %}
+
+{% macro severity_badge(severity) -%}
+  <span class="badge {{ severity | severity_class }}">{{ severity }}</span>
+{%- endmacro %}
+
+{% macro directness(is_direct) -%}
+  {% if is_direct %}<span class="badge direct">Direct</span>
+  {% else %}<span class="badge inherited">Via group</span>{% endif %}
+{%- endmacro %}
+
+{% macro chain_text(graph_principals, chain) -%}
+  {%- for gid in chain -%}
+    {{ graph_principals[gid].display_name if gid in graph_principals else gid }}{% if not loop.last %} &rsaquo; {% endif %}
+  {%- endfor -%}
+{%- endmacro %}

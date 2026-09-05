@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import principal_badge, role_link, severity_badge, directness %}
+{% block title %}{{ principal.display_name }} &middot; RoleGraph{% endblock %}
+{% block content %}
+<p class="faint"><a href="/identities">Identities</a> &rsaquo; {{ principal.display_name }}</p>
+<h1>{{ principal.display_name }} {{ principal_badge(principal) }}</h1>
+<p class="lede">
+  {{ principal.subtitle }}{% if principal.department %} &middot; {{ principal.department }}{% endif %}
+  {% if principal.description %}<br>{{ principal.description }}{% endif %}
+</p>
+
+<div class="stat-grid" style="margin-bottom:20px">
+  <div class="stat"><div class="value">{{ grants | length }}</div><div class="label">Effective grants</div>
+    <div class="sub">Distinct role-and-scope pairs</div></div>
+  <div class="stat"><div class="value">{{ groups | length }}</div><div class="label">Groups</div>
+    <div class="sub">{{ groups | selectattr('is_direct') | list | length }} direct, rest nested</div></div>
+  <div class="stat"><div class="value">{{ reach.total }}</div><div class="label">Scopes reached</div>
+    <div class="sub">{{ reach.subscription }} subscription(s), {{ reach.resource }} resource(s)</div></div>
+  <div class="stat {{ 'alert' if findings | selectattr('severity','equalto','high') | list }}">
+    <div class="value">{{ findings | length }}</div><div class="label">Findings</div>
+    <div class="sub">{{ findings | selectattr('severity','equalto','high') | list | length }} high</div></div>
+</div>
+
+<h2>What this identity can reach</h2>
+<div class="card tight">
+<table>
+  <thead><tr><th>Role</th><th>Assigned at</th><th>How</th><th class="num">Reach</th><th></th></tr></thead>
+  <tbody>
+  {% for grant in grants %}
+    <tr>
+      <td>{{ role_link(grant.role) }}
+        {% if grant.role.is_custom %}<span class="badge custom">Custom</span>{% endif %}</td>
+      <td>
+        {% if grant.scope_node %}
+          <a href="/scopes?scope={{ grant.scope | urlencode }}">{{ grant.scope_display }}</a>
+          <div class="faint">{{ grant.scope_kind }} &middot; {{ grant.breadcrumb }}</div>
+        {% else %}
+          {{ grant.scope_display }}
+          <div class="faint">Scope not present in this snapshot</div>
+        {% endif %}
+      </td>
+      <td>
+        {{ directness(grant.is_direct) }}
+        {% if grant.route_count > 1 %}<span class="badge count">{{ grant.route_count }} paths</span>{% endif %}
+        <div class="faint">{{ grant.explanation }}</div>
+      </td>
+      <td class="num">{{ grant.reach }}</td>
+      <td><a class="btn small" href="/identities/{{ principal.id }}/path/{{ grant.paths[0].assignment.id }}?chain={{ grant.paths[0].membership_chain | join('>') }}">Access path</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5"><div class="empty">This identity has no role assignments in this snapshot.</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% if not diagram.is_empty %}
+<h2>Relationships</h2>
+<p class="faint">Solid lines are direct steps; dashed lines mark access that arrives through group
+membership. Nodes are clickable.</p>
+{% include "partials/relationship_svg.html" %}
+{% endif %}
+
+<div class="two-col" style="margin-top:24px">
+  <div>
+    <h2>Group membership</h2>
+    <div class="card tight">
+      <table>
+        <thead><tr><th>Group</th><th>How</th></tr></thead>
+        <tbody>
+        {% for group in groups %}
+          <tr>
+            <td><a href="/identities/{{ group.id }}">{{ group.name }}</a></td>
+            <td>
+              {% if group.is_direct %}<span class="badge direct">Direct member</span>{% endif %}
+              {% for label in group.chain_labels %}
+                {% if label != group.name %}<div class="faint">{{ principal.display_name }} &rsaquo; {{ label }}</div>{% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="2"><div class="empty">Not a member of any group.</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if members %}
+    <h2>Members of this group</h2>
+    <div class="card tight">
+      <table>
+        <thead><tr><th>Member</th><th>How</th></tr></thead>
+        <tbody>
+        {% for member in members %}
+          <tr>
+            <td><a href="/identities/{{ member.id }}">{{ member.name }}</a>
+              {% if member.principal %}{{ principal_badge(member.principal) }}{% endif %}</td>
+            <td>{% if member.is_direct %}<span class="badge direct">Direct</span>
+                {% else %}<span class="badge inherited">Nested</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <div>
+    <h2>Findings</h2>
+    {% for finding in findings %}
+      <div class="finding {{ finding.severity | severity_class }}">
+        <div class="head">{{ severity_badge(finding.severity) }} <strong>{{ finding.title }}</strong></div>
+        <p class="what">{{ finding.what }}</p>
+        <p class="why">{{ finding.why }}</p>
+      </div>
+    {% else %}
+      <div class="empty">No findings for this identity.</div>
+    {% endfor %}
+
+    <h2>Raw identifiers</h2>
+    <div class="card tight">
+      <dl class="kv">
+        <dt>Object id</dt><dd class="mono">{{ principal.id }}</dd>
+        {% if principal.upn %}<dt>UPN</dt><dd class="mono">{{ principal.upn }}</dd>{% endif %}
+        {% if principal.app_id %}<dt>App id</dt><dd class="mono">{{ principal.app_id }}</dd>{% endif %}
+        <dt>Type</dt><dd>{{ principal.type.value }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% endblock %}

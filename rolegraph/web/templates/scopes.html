@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Scopes &middot; RoleGraph{% endblock %}
+{% macro node_tree(scope, scopes, children_by_scope, depth) %}
+  {% set node = scopes.get(scope) %}
+  {% if node %}
+  <li>
+    <a href="/scopes?scope={{ node.scope | urlencode }}">{{ node.display_name }}</a>
+    <span class="faint">{{ node.kind_label }}</span>
+    {% set kids = children_by_scope.get(scope, []) %}
+    {% if kids and depth < 6 %}
+      <ul>{% for child in kids | sort %}{{ node_tree(child, scopes, children_by_scope, depth + 1) }}{% endfor %}</ul>
+    {% endif %}
+  </li>
+  {% endif %}
+{% endmacro %}
+{% block content %}
+<h1>Scope hierarchy</h1>
+<p class="lede">Tenant, management groups, subscriptions, resource groups and resources. A role
+assigned at any level applies to everything beneath it.</p>
+<div class="card">
+  <ul class="tree">
+    {% for root in roots %}{{ node_tree(root.scope, scopes, children_by_scope, 0) }}{% endfor %}
+  </ul>
+</div>
+{% endblock %}

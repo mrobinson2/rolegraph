@@ -1,0 +1,35 @@
+# RoleGraph - self-hosted Azure RBAC access intelligence.
+#
+#   docker compose up
+#   open http://localhost:8000          (ROLEGRAPH_PORT=8010 docker compose up to change the port)
+#
+# Everything runs locally. The container needs no credentials and makes no
+# outbound network calls.
+
+services:
+  rolegraph:
+    build: .
+    image: rolegraph:local
+    container_name: rolegraph
+    ports:
+      # Bound to localhost only. Set ROLEGRAPH_PORT if 8000 is taken.
+      - "127.0.0.1:${ROLEGRAPH_PORT:-8000}:8000"
+    volumes:
+      - rolegraph-data:/data     # the SQLite database and its snapshots
+      - ./config:/app/config:ro  # edit privileged_roles.yaml without rebuilding
+    environment:
+      ROLEGRAPH_DATA_DIR: /data
+      ROLEGRAPH_DATABASE_URL: sqlite:////data/rolegraph.db
+      ROLEGRAPH_DEMO_DATASET: /app/data/demo/contoso.json
+      ROLEGRAPH_MAX_UPLOAD_BYTES: "26214400"
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  rolegraph-data:

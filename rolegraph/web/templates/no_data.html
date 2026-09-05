@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Import a dataset &middot; RoleGraph{% endblock %}
+{% block content %}
+<h1>Nothing imported yet</h1>
+<p class="lede">RoleGraph reads an offline export of your Azure RBAC data. Nothing is collected from
+Azure and no credentials are needed. Load the synthetic Contoso tenant to see how it works, or
+upload your own export.</p>
+<div class="card">
+  <form method="post" action="/import/demo" style="display:inline">
+    <button class="btn primary" type="submit">Load the Contoso demo dataset</button>
+  </form>
+  <a class="btn" href="/import">Upload a dataset</a>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">Role<span>Graph</span></a>
+  <span class="tagline">See who has access to what &mdash; and exactly why.</span>
+  <nav class="main">
+    <a href="/" class="{{ 'active' if nav == 'overview' }}">Overview</a>
+    <a href="/identities" class="{{ 'active' if nav == 'identities' }}">Identities</a>
+    <a href="/roles" class="{{ 'active' if nav == 'roles' }}">Roles</a>
+    <a href="/scopes" class="{{ 'active' if nav == 'scopes' }}">Scopes</a>
+    <a href="/privileged" class="{{ 'active' if nav == 'privileged' }}">Privileged</a>
+    <a href="/findings" class="{{ 'active' if nav == 'findings' }}">Findings</a>
+    <a href="/import" class="{{ 'active' if nav == 'import' }}">Import</a>
+  </nav>
+</header>
+<main>
+  {% block content %}{% endblock %}
+  <footer class="foot">
+    {% if snapshot %}
+      Snapshot #{{ snapshot.id }} &middot; {{ snapshot.source_name }} &middot; imported {{ snapshot.created_at }}
+      &middot; {{ snapshot.total_records }} records
+    {% else %}
+      No dataset imported.
+    {% endif %}
+    &middot; All analysis runs locally. RoleGraph makes no outbound network calls.
+  </footer>
+</main>
+</body>
+</html>

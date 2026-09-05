@@ -1,0 +1,607 @@
+{
+  "$schema": "rolegraph-import/v1",
+  "$notes": {
+    "description": "Synthetic Contoso tenant. No real identities, subscriptions or resources.",
+    "intentionalIssues": [
+      "All-Engineering is nested inside Azure-Platform-Admins, so every developer silently inherits Contributor on the whole Production management group.",
+      "sp-payments-deploy holds Owner directly at the Payments Production subscription.",
+      "Contoso-Platform-Operator is a custom role with wildcard permissions across compute, storage and network.",
+      "Contoso-Deployment-Automation is a custom role that can create role assignments, so anyone holding it can escalate their own privilege.",
+      "Payments-Squad has Contributor assigned twice on rg-payments-api, and also inherits Contributor from the Production management group.",
+      "Dan Okafor reaches Azure-Developers by two different nesting paths.",
+      "Priya Raman holds Owner directly on the Customer Production subscription."
+    ]
+  },
+  "tenants": [
+    {
+      "id": "11111111-2222-3333-4444-555555555555",
+      "displayName": "Contoso Ltd",
+      "domain": "contoso.onmicrosoft.com"
+    }
+  ],
+  "managementGroups": [
+    {
+      "id": "Contoso-Root",
+      "displayName": "Contoso Root",
+      "parent": "/"
+    },
+    {
+      "id": "Production",
+      "displayName": "Production",
+      "parent": "Contoso-Root"
+    },
+    {
+      "id": "NonProduction",
+      "displayName": "Non-Production",
+      "parent": "Contoso-Root"
+    },
+    {
+      "id": "Payments-Prod",
+      "displayName": "Payments-Prod",
+      "parent": "Production"
+    },
+    {
+      "id": "Customer-Prod",
+      "displayName": "Customer-Prod",
+      "parent": "Production"
+    },
+    {
+      "id": "Development",
+      "displayName": "Development",
+      "parent": "NonProduction"
+    }
+  ],
+  "subscriptions": [
+    {
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a1",
+      "displayName": "Payments Production",
+      "managementGroup": "Payments-Prod"
+    },
+    {
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a2",
+      "displayName": "Customer Production",
+      "managementGroup": "Customer-Prod"
+    },
+    {
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a3",
+      "displayName": "Shared Production Services",
+      "managementGroup": "Production"
+    },
+    {
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a4",
+      "displayName": "Development",
+      "managementGroup": "Development"
+    }
+  ],
+  "resourceGroups": [
+    {
+      "name": "rg-payments-api",
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a1",
+      "location": "westeurope"
+    },
+    {
+      "name": "rg-payments-data",
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a1",
+      "location": "westeurope"
+    },
+    {
+      "name": "rg-customer-web",
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a2",
+      "location": "northeurope"
+    },
+    {
+      "name": "rg-shared-network",
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a3",
+      "location": "westeurope"
+    },
+    {
+      "name": "rg-dev-sandbox",
+      "subscriptionId": "00000000-0000-0000-0000-0000000000a4",
+      "location": "westeurope"
+    }
+  ],
+  "resources": [
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-api/providers/Microsoft.Web/sites/app-payments-api",
+      "name": "app-payments-api",
+      "type": "Microsoft.Web/sites",
+      "location": "westeurope"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-data/providers/Microsoft.Storage/storageAccounts/stpaymentsprod",
+      "name": "stpaymentsprod",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "westeurope"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-data/providers/Microsoft.KeyVault/vaults/kv-payments-prod",
+      "name": "kv-payments-prod",
+      "type": "Microsoft.KeyVault/vaults",
+      "location": "westeurope"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-0000000000a2/resourceGroups/rg-customer-web/providers/Microsoft.Sql/servers/sql-customer-prod",
+      "name": "sql-customer-prod",
+      "type": "Microsoft.Sql/servers",
+      "location": "northeurope"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-0000000000a3/resourceGroups/rg-shared-network/providers/Microsoft.Network/virtualNetworks/vnet-hub",
+      "name": "vnet-hub",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "westeurope"
+    },
+    {
+      "id": "/subscriptions/00000000-0000-0000-0000-0000000000a4/resourceGroups/rg-dev-sandbox/providers/Microsoft.Storage/storageAccounts/stdevsandbox",
+      "name": "stdevsandbox",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "westeurope"
+    }
+  ],
+  "roleDefinitions": [
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+      "roleName": "Owner",
+      "roleType": "BuiltInRole",
+      "description": "Grants full access to manage all resources, including assigning roles.",
+      "assignableScopes": [
+        "/"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "*"
+          ],
+          "notActions": [],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "roleName": "Contributor",
+      "roleType": "BuiltInRole",
+      "description": "Grants full access to manage all resources, but cannot assign roles.",
+      "assignableScopes": [
+        "/"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "*"
+          ],
+          "notActions": [
+            "Microsoft.Authorization/*/Delete",
+            "Microsoft.Authorization/*/Write",
+            "Microsoft.Authorization/elevateAccess/Action"
+          ],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+      "roleName": "Reader",
+      "roleType": "BuiltInRole",
+      "description": "View all resources, but does not allow you to make any changes.",
+      "assignableScopes": [
+        "/"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "*/read"
+          ],
+          "notActions": [],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+      "roleName": "User Access Administrator",
+      "roleType": "BuiltInRole",
+      "description": "Lets you manage user access to Azure resources.",
+      "assignableScopes": [
+        "/"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "*/read",
+            "Microsoft.Authorization/*",
+            "Microsoft.Support/*"
+          ],
+          "notActions": [],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+      "roleName": "Key Vault Secrets User",
+      "roleType": "BuiltInRole",
+      "description": "Read secret contents.",
+      "assignableScopes": [
+        "/"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "Microsoft.KeyVault/vaults/read"
+          ],
+          "notActions": [],
+          "dataActions": [
+            "Microsoft.KeyVault/vaults/secrets/getSecret/action"
+          ],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+      "roleName": "Storage Blob Data Contributor",
+      "roleType": "BuiltInRole",
+      "description": "Read, write and delete Azure Storage containers and blobs.",
+      "assignableScopes": [
+        "/"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "Microsoft.Storage/storageAccounts/blobServices/containers/*"
+          ],
+          "notActions": [],
+          "dataActions": [
+            "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/*"
+          ],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/c1f0a8de-6b1e-4c1e-9a1e-2f77b0c3a911",
+      "roleName": "Contoso-Platform-Operator",
+      "roleType": "CustomRole",
+      "description": "Day-two operations across the platform estate.",
+      "assignableScopes": [
+        "/providers/Microsoft.Management/managementGroups/Contoso-Root"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "Microsoft.Compute/*",
+            "Microsoft.Storage/*",
+            "Microsoft.Network/*",
+            "Microsoft.Resources/*",
+            "Microsoft.Authorization/*/read"
+          ],
+          "notActions": [],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/d47b2f60-9f31-4a7f-88a2-6b0f2d5c7e22",
+      "roleName": "Contoso-Deployment-Automation",
+      "roleType": "CustomRole",
+      "description": "Used by the deployment pipeline to provision and wire up workloads.",
+      "assignableScopes": [
+        "/providers/Microsoft.Management/managementGroups/Production"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "Microsoft.Resources/deployments/*",
+            "Microsoft.Authorization/roleAssignments/write",
+            "Microsoft.Authorization/roleAssignments/read",
+            "Microsoft.Web/sites/*"
+          ],
+          "notActions": [],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    },
+    {
+      "id": "/providers/Microsoft.Authorization/roleDefinitions/e90c1b44-2a55-4f8e-9d33-71bb4c9f0a10",
+      "roleName": "Contoso-Legacy-Auditor",
+      "roleType": "CustomRole",
+      "description": "Left over from the 2019 audit programme. No longer assigned to anyone.",
+      "assignableScopes": [
+        "/providers/Microsoft.Management/managementGroups/Contoso-Root"
+      ],
+      "permissions": [
+        {
+          "actions": [
+            "*/read"
+          ],
+          "notActions": [],
+          "dataActions": [],
+          "notDataActions": []
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "u-1a2b3c4d-jane",
+      "displayName": "Jane Smith",
+      "userPrincipalName": "jane.smith@contoso.com",
+      "mail": "jane.smith@contoso.com",
+      "department": "Cloud Platform"
+    },
+    {
+      "id": "u-2b3c4d5e-dan",
+      "displayName": "Dan Okafor",
+      "userPrincipalName": "dan.okafor@contoso.com",
+      "mail": "dan.okafor@contoso.com",
+      "department": "Payments Engineering"
+    },
+    {
+      "id": "u-3c4d5e6f-priya",
+      "displayName": "Priya Raman",
+      "userPrincipalName": "priya.raman@contoso.com",
+      "mail": "priya.raman@contoso.com",
+      "department": "Security Engineering"
+    },
+    {
+      "id": "u-4d5e6f70-marco",
+      "displayName": "Marco Bianchi",
+      "userPrincipalName": "marco.bianchi@contoso.com",
+      "mail": "marco.bianchi@contoso.com",
+      "department": "Payments Engineering"
+    },
+    {
+      "id": "u-5e6f7081-sofia",
+      "displayName": "Sofia Lindqvist",
+      "userPrincipalName": "sofia.lindqvist@contoso.com",
+      "mail": "sofia.lindqvist@contoso.com",
+      "department": "Cloud Platform"
+    },
+    {
+      "id": "u-6f708192-tom",
+      "displayName": "Tom Becker",
+      "userPrincipalName": "tom.becker@contoso.com",
+      "mail": "tom.becker@contoso.com",
+      "department": "Finance"
+    }
+  ],
+  "groups": [
+    {
+      "id": "g-a1-platform-admins",
+      "displayName": "Azure-Platform-Admins",
+      "description": "Owns the Azure platform. Highly privileged."
+    },
+    {
+      "id": "g-a2-developers",
+      "displayName": "Azure-Developers",
+      "description": "All application developers."
+    },
+    {
+      "id": "g-a3-all-engineering",
+      "displayName": "All-Engineering",
+      "description": "Umbrella group for every engineering function."
+    },
+    {
+      "id": "g-a4-payments-squad",
+      "displayName": "Payments-Squad",
+      "description": "The team that builds the payments platform."
+    },
+    {
+      "id": "g-a5-security-engineering",
+      "displayName": "Security-Engineering",
+      "description": "Security engineering function."
+    },
+    {
+      "id": "g-a6-contractors",
+      "displayName": "Contractors",
+      "description": "Third-party contractors with time-boxed access."
+    }
+  ],
+  "servicePrincipals": [
+    {
+      "id": "sp-b1-payments-deploy",
+      "displayName": "sp-payments-deploy",
+      "appId": "aaaaaaaa-1111-2222-3333-444444444444",
+      "description": "Release pipeline for the payments platform."
+    },
+    {
+      "id": "sp-b2-terraform-ci",
+      "displayName": "sp-terraform-ci",
+      "appId": "bbbbbbbb-1111-2222-3333-444444444444",
+      "description": "Terraform CI runner."
+    }
+  ],
+  "managedIdentities": [
+    {
+      "id": "mi-c1-payments-api",
+      "displayName": "mi-payments-api",
+      "description": "System-assigned identity of app-payments-api."
+    },
+    {
+      "id": "mi-c2-backup-runner",
+      "displayName": "mi-backup-runner",
+      "description": "Nightly backup job identity."
+    }
+  ],
+  "groupMemberships": [
+    {
+      "groupId": "g-a1-platform-admins",
+      "memberId": "u-1a2b3c4d-jane"
+    },
+    {
+      "groupId": "g-a1-platform-admins",
+      "memberId": "u-5e6f7081-sofia"
+    },
+    {
+      "groupId": "g-a2-developers",
+      "memberId": "u-2b3c4d5e-dan"
+    },
+    {
+      "groupId": "g-a2-developers",
+      "memberId": "u-4d5e6f70-marco"
+    },
+    {
+      "groupId": "g-a4-payments-squad",
+      "memberId": "u-2b3c4d5e-dan"
+    },
+    {
+      "groupId": "g-a5-security-engineering",
+      "memberId": "u-3c4d5e6f-priya"
+    },
+    {
+      "groupId": "g-a6-contractors",
+      "memberId": "u-6f708192-tom"
+    },
+    {
+      "groupId": "g-a2-developers",
+      "memberId": "g-a4-payments-squad"
+    },
+    {
+      "groupId": "g-a3-all-engineering",
+      "memberId": "g-a2-developers"
+    },
+    {
+      "groupId": "g-a3-all-engineering",
+      "memberId": "g-a5-security-engineering"
+    },
+    {
+      "groupId": "g-a1-platform-admins",
+      "memberId": "g-a3-all-engineering"
+    }
+  ],
+  "roleAssignments": [
+    {
+      "id": "ra-0001",
+      "principalId": "g-a1-platform-admins",
+      "principalType": "Group",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/providers/Microsoft.Management/managementGroups/Production",
+      "createdOn": "2024-03-11T09:14:00Z",
+      "createdBy": "jane.smith@contoso.com",
+      "description": "Platform admins manage everything in production."
+    },
+    {
+      "id": "ra-0002",
+      "principalId": "sp-b1-payments-deploy",
+      "principalType": "ServicePrincipal",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a1",
+      "createdOn": "2023-11-02T16:40:00Z",
+      "createdBy": "sofia.lindqvist@contoso.com",
+      "description": "Temporary during migration - never revoked."
+    },
+    {
+      "id": "ra-0003",
+      "principalId": "u-1a2b3c4d-jane",
+      "principalType": "User",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a3",
+      "createdOn": "2024-01-20T11:02:00Z"
+    },
+    {
+      "id": "ra-0004",
+      "principalId": "g-a2-developers",
+      "principalType": "Group",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/c1f0a8de-6b1e-4c1e-9a1e-2f77b0c3a911",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a4",
+      "createdOn": "2024-06-05T08:30:00Z"
+    },
+    {
+      "id": "ra-0005",
+      "principalId": "g-a5-security-engineering",
+      "principalType": "Group",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+      "scope": "/providers/Microsoft.Management/managementGroups/Contoso-Root",
+      "createdOn": "2023-09-15T13:00:00Z"
+    },
+    {
+      "id": "ra-0006",
+      "principalId": "mi-c1-payments-api",
+      "principalType": "ManagedIdentity",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-data/providers/Microsoft.KeyVault/vaults/kv-payments-prod",
+      "createdOn": "2024-04-18T10:12:00Z"
+    },
+    {
+      "id": "ra-0007",
+      "principalId": "u-4d5e6f70-marco",
+      "principalType": "User",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a4/resourceGroups/rg-dev-sandbox",
+      "createdOn": "2024-07-01T15:45:00Z"
+    },
+    {
+      "id": "ra-0008",
+      "principalId": "sp-b2-terraform-ci",
+      "principalType": "ServicePrincipal",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/d47b2f60-9f31-4a7f-88a2-6b0f2d5c7e22",
+      "scope": "/providers/Microsoft.Management/managementGroups/Production",
+      "createdOn": "2024-02-27T07:20:00Z"
+    },
+    {
+      "id": "ra-0009",
+      "principalId": "g-a4-payments-squad",
+      "principalType": "Group",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-api",
+      "createdOn": "2024-05-09T09:00:00Z"
+    },
+    {
+      "id": "ra-0010",
+      "principalId": "u-6f708192-tom",
+      "principalType": "User",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a2",
+      "createdOn": "2024-08-12T12:30:00Z"
+    },
+    {
+      "id": "ra-0011",
+      "principalId": "u-3c4d5e6f-priya",
+      "principalType": "User",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a2",
+      "createdOn": "2024-06-30T17:05:00Z",
+      "description": "Granted during an incident and never removed."
+    },
+    {
+      "id": "ra-0012",
+      "principalId": "mi-c2-backup-runner",
+      "principalType": "ManagedIdentity",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-data/providers/Microsoft.Storage/storageAccounts/stpaymentsprod",
+      "createdOn": "2024-03-03T02:00:00Z"
+    },
+    {
+      "id": "ra-0013",
+      "principalId": "g-a6-contractors",
+      "principalType": "Group",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a4",
+      "createdOn": "2024-09-01T09:30:00Z"
+    },
+    {
+      "id": "ra-0014",
+      "principalId": "u-5e6f7081-sofia",
+      "principalType": "User",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/providers/Microsoft.Management/managementGroups/NonProduction",
+      "createdOn": "2024-01-05T10:00:00Z"
+    },
+    {
+      "id": "ra-0015",
+      "principalId": "g-a4-payments-squad",
+      "principalType": "Group",
+      "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/subscriptions/00000000-0000-0000-0000-0000000000a1/resourceGroups/rg-payments-api",
+      "createdOn": "2024-10-22T14:10:00Z",
+      "createdBy": "sp-terraform-ci"
+    }
+  ]
+}

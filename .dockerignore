@@ -1,0 +1,9 @@
+.git
+.venv
+.pytest_cache
+__pycache__
+*.egg-info
+data/*.db
+data/uploads
+tests
+.DS_Store

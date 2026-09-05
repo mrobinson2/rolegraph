@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import principal_badge, severity_badge %}
+{% block title %}{{ role.name }} &middot; RoleGraph{% endblock %}
+{% block content %}
+<p class="faint"><a href="/roles">Roles</a> &rsaquo; {{ role.name }}</p>
+<h1>{{ role.name }}
+  {% if role.is_custom %}<span class="badge custom">Custom role</span>
+  {% else %}<span class="badge builtin">Built-in role</span>{% endif %}</h1>
+{% if role.description %}<p class="lede">{{ role.description }}</p>{% endif %}
+
+<div class="two-col">
+  <div>
+    <h2>Identities holding this role</h2>
+    <div class="card tight">
+      <table>
+        <thead><tr><th>Identity</th><th>Type</th><th>How</th><th>At</th></tr></thead>
+        <tbody>
+        {% for holder in holders %}
+          <tr>
+            <td><a href="/identities/{{ holder.principal.id }}">{{ holder.principal.display_name }}</a></td>
+            <td>{{ principal_badge(holder.principal) }}</td>
+            <td>
+              {% if holder.direct %}<span class="badge direct">Direct</span>{% endif %}
+              {% if holder.via %}<div class="faint">Via {{ holder.via | join(', ') }}</div>{% endif %}
+            </td>
+            <td class="muted">{{ holder.scopes | join(', ') }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4"><div class="empty">Nobody holds this role in this snapshot.</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Assignment records</h2>
+    <div class="card tight">
+      <table>
+        <thead><tr><th>Assignment</th><th>Principal</th><th>Scope</th></tr></thead>
+        <tbody>
+        {% for row in assignments %}
+          <tr>
+            <td class="mono">{{ row.assignment.id }}
+              {% if row.assignment.created_on %}<div class="faint">{{ row.assignment.created_on }}</div>{% endif %}</td>
+            <td>{% if row.principal %}<a href="/identities/{{ row.principal.id }}">{{ row.principal_name }}</a>
+                {% else %}<span class="muted">{{ row.principal_name }}</span>{% endif %}</td>
+            <td>{% if row.scope_node %}<a href="/scopes?scope={{ row.assignment.scope | urlencode }}">{{ row.scope_node.display_name }}</a>{% else %}<span class="muted">Not imported</span>{% endif %}
+              <div class="faint">{{ row.breadcrumb }}</div></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="3"><div class="empty">No assignment records reference this role.</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <h2>Permissions</h2>
+    <div class="card">
+      <h3>Actions ({{ permissions.actions | length }})</h3>
+      <ul class="actions-list">
+        {% for action in permissions.actions %}
+          <li class="{{ 'wildcard' if action.endswith('*') }}">{{ action }}</li>
+        {% else %}<li class="muted">None</li>{% endfor %}
+      </ul>
+      {% if permissions.notActions %}
+        <h3 style="margin-top:16px">Not actions ({{ permissions.notActions | length }})</h3>
+        <ul class="actions-list">{% for a in permissions.notActions %}<li>{{ a }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if permissions.dataActions %}
+        <h3 style="margin-top:16px">Data actions ({{ permissions.dataActions | length }})</h3>
+        <ul class="actions-list">{% for a in permissions.dataActions %}<li>{{ a }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if permissions.notDataActions %}
+        <h3 style="margin-top:16px">Not data actions</h3>
+        <ul class="actions-list">{% for a in permissions.notDataActions %}<li>{{ a }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    {% if findings %}
+    <h2>Findings</h2>
+    {% for finding in findings %}
+      <div class="finding {{ finding.severity | severity_class }}">
+        <div class="head">{{ severity_badge(finding.severity) }} <strong>{{ finding.title }}</strong></div>
+        <p class="what">{{ finding.what }}</p>
+        <p class="why">{{ finding.why }}</p>
+      </div>
+    {% endfor %}
+    {% endif %}
+
+    <h2>Definition</h2>
+    <div class="card tight">
+      <dl class="kv">
+        <dt>Role id</dt><dd class="scope-id">{{ role.id }}</dd>
+        <dt>Role type</dt><dd>{{ role.role_type }}</dd>
+        <dt>Assignable at</dt><dd class="scope-id">{{ role.assignable_scopes | join(', ') or 'Not specified' }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% endblock %}

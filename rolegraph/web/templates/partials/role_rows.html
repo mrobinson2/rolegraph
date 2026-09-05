@@ -1,0 +1,22 @@
+<table>
+  <thead><tr><th>Role</th><th>Type</th><th class="num">Actions</th><th class="num">Wildcards</th><th class="num">Assignments</th><th>Notes</th></tr></thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <td><a href="/roles/{{ row.role.id | urlencode }}"><strong>{{ row.role.name }}</strong></a>
+        {% if row.role.description %}<div class="faint">{{ row.role.description }}</div>{% endif %}</td>
+      <td>{% if row.role.is_custom %}<span class="badge custom">Custom</span>
+          {% else %}<span class="badge builtin">Built-in</span>{% endif %}</td>
+      <td class="num">{{ row.action_count }}</td>
+      <td class="num">{% if row.wildcards %}<span class="badge sev-medium">{{ row.wildcards }}</span>{% else %}—{% endif %}</td>
+      <td class="num">{{ row.assignment_count or '—' }}</td>
+      <td>
+        {% if row.can_assign_roles %}<span class="badge sev-high">Can grant roles</span>{% endif %}
+        {% if row.role.is_custom and not row.assignment_count %}<span class="badge count">Unassigned</span>{% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6"><div class="empty">No roles match that search.</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>

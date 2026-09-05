@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Snapshot #{{ snapshot_id }} warnings &middot; RoleGraph{% endblock %}
+{% block content %}
+<p class="faint"><a href="/import">Import</a> &rsaquo; Snapshot #{{ snapshot_id }}</p>
+<h1>Snapshot #{{ snapshot_id }}</h1>
+{% if summary %}
+<p class="lede">{{ summary.source_name }} &middot; imported {{ summary.created_at }} &middot;
+  {{ summary.total_records }} records, {{ summary.total_skipped }} skipped.</p>
+{% endif %}
+<h2>Warnings ({{ warnings | length }})</h2>
+{% if warnings %}
+<div class="card tight">
+  <table>
+    <thead><tr><th>Severity</th><th>Category</th><th>Section</th><th>Detail</th><th>Record</th></tr></thead>
+    <tbody>
+    {% for warning in warnings %}
+      <tr>
+        <td>{% if warning.severity == 'error' %}<span class="badge sev-high">error</span>
+            {% else %}<span class="badge sev-medium">warning</span>{% endif %}</td>
+        <td class="mono">{{ warning.category }}</td>
+        <td class="muted">{{ warning.record_type or '—' }}</td>
+        <td>{{ warning.message }}</td>
+        <td class="scope-id">{{ warning.record_id or '—' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="notice ok">No warnings. Every record in this snapshot was understood.</div>
+{% endif %}
+{% endblock %}

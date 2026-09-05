@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import principal_badge, role_link, severity_badge %}
+{% block title %}{{ node.display_name }} &middot; RoleGraph{% endblock %}
+{% block content %}
+<p class="faint">
+  <a href="/scopes">Scopes</a>
+  {% for step in breadcrumb %} &rsaquo; <a href="/scopes?scope={{ step.scope | urlencode }}">{{ step.display_name }}</a>{% endfor %}
+</p>
+<h1>{{ node.display_name }} <span class="badge builtin">{{ node.kind_label }}</span></h1>
+<p class="lede">
+  {% if node.resource_type %}{{ node.resource_type }}{% endif %}
+  {% if node.location %} &middot; {{ node.location }}{% endif %}
+  {% if descendant_count %} &middot; contains {{ descendant_count }} scope(s){% endif %}
+</p>
+
+<h2>Who has access here</h2>
+<p class="faint">Includes access inherited from any scope above this one.</p>
+<div class="card tight">
+<table>
+  <thead><tr><th>Identity</th><th>Type</th><th>Role</th><th>Granted at</th><th>How</th><th></th></tr></thead>
+  <tbody>
+  {% for row in access %}
+    <tr>
+      <td><a href="/identities/{{ row.principal.id }}">{{ row.principal.display_name }}</a></td>
+      <td>{{ principal_badge(row.principal) }}</td>
+      <td>{{ role_link(row.role) }}</td>
+      <td>{{ row.assigned_at }}</td>
+      <td>
+        {% if row.inherited %}<span class="badge inherited">Inherited</span>
+        {% else %}<span class="badge direct">Assigned here</span>{% endif %}
+        {% if not row.direct %}<div class="faint">Through group membership</div>{% endif %}
+      </td>
+      <td><a class="btn small" href="/identities/{{ row.principal.id }}/path/{{ row.path.assignment.id }}?scope={{ node.scope | urlencode }}&chain={{ row.path.membership_chain | join('>') }}">Path</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6"><div class="empty">Nobody has access to this scope in this snapshot.</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="two-col" style="margin-top:24px">
+  <div>
+    {% if children %}
+    <h2>Contains</h2>
+    <div class="card tight">
+      <table>
+        <thead><tr><th>Scope</th><th>Kind</th></tr></thead>
+        <tbody>
+        {% for child in children %}
+          <tr><td><a href="/scopes?scope={{ child.scope | urlencode }}">{{ child.display_name }}</a></td>
+              <td class="muted">{{ child.kind_label }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+  <div>
+    {% if findings %}
+    <h2>Findings at this scope</h2>
+    {% for finding in findings %}
+      <div class="finding {{ finding.severity | severity_class }}">
+        <div class="head">{{ severity_badge(finding.severity) }} <strong>{{ finding.title }}</strong></div>
+        <p class="what">{{ finding.what }}</p>
+      </div>
+    {% endfor %}
+    {% endif %}
+    <h2>Raw scope</h2>
+    <div class="card tight"><div class="scope-id">{{ node.raw_scope }}</div></div>
+  </div>
+</div>
+{% endblock %}

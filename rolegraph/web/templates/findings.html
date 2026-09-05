@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Findings &middot; RoleGraph{% endblock %}
+{% block content %}
+<h1>Findings</h1>
+<p class="lede">Deterministic observations from the imported snapshot. Each one names what was
+detected, the identity, role and scope it concerns, why it matters, and the access path that
+supports it. These are observations for review, not vulnerabilities, and nothing here is scored
+or inferred.</p>
+
+<div class="stat-grid" style="margin-bottom:18px">
+  <div class="stat"><div class="value">{{ summary.total }}</div><div class="label">Findings</div></div>
+  <div class="stat alert"><div class="value">{{ summary.high }}</div><div class="label">High</div></div>
+  <div class="stat"><div class="value">{{ summary.medium }}</div><div class="label">Medium</div></div>
+  <div class="stat"><div class="value">{{ summary.low }}</div><div class="label">Low</div></div>
+</div>
+
+<div class="toolbar">
+  <div class="chips">
+    <a class="chip {{ 'active' if not severity_filter }}" href="/findings{% if rule_filter %}?rule={{ rule_filter }}{% endif %}">All severities</a>
+    {% for sev in ['high','medium','low'] %}
+      <a class="chip {{ 'active' if severity_filter == sev }}" href="/findings?severity={{ sev }}{% if rule_filter %}&rule={{ rule_filter }}{% endif %}">{{ sev }}</a>
+    {% endfor %}
+  </div>
+</div>
+<div class="toolbar">
+  <div class="chips">
+    <a class="chip {{ 'active' if not rule_filter }}" href="/findings{% if severity_filter %}?severity={{ severity_filter }}{% endif %}">All rules</a>
+    {% for rule in rules %}
+      <a class="chip {{ 'active' if rule_filter == rule }}" href="/findings?rule={{ rule }}{% if severity_filter %}&severity={{ severity_filter }}{% endif %}">{{ rule }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+{% include "partials/finding_cards.html" %}
+{% endblock %}

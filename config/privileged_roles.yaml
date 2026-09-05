@@ -1,0 +1,14 @@
+# Roles RoleGraph treats as privileged.
+#
+# These drive the Privileged access screen and several findings. Edit this file
+# to match your organisation - add custom roles, or remove Contributor if your
+# tenant uses it as a baseline. Names are matched case-insensitively against the
+# role definition name in the imported data.
+
+privilegedRoles:
+  - name: Owner
+    why: Full control of the scope, including the ability to grant access to others.
+  - name: Contributor
+    why: Can create, modify and delete any resource in the scope.
+  - name: User Access Administrator
+    why: Can grant any identity any role at the scope, so it can escalate to Owner.

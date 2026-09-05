@@ -1,0 +1,20 @@
+<svg class="relationship" viewBox="0 0 980 {{ diagram.height }}" role="img"
+     aria-label="Relationship diagram for {{ principal.display_name }}">
+  <text class="column-title" x="90" y="18">Identity</text>
+  <text class="column-title" x="300" y="18">Group membership</text>
+  <text class="column-title" x="530" y="18">Role</text>
+  <text class="column-title" x="770" y="18">Assigned at</text>
+  {% for edge in diagram.edges %}
+    <path class="edge {{ 'dashed' if edge.dashed }}" d="{{ edge.d }}"/>
+  {% endfor %}
+  {% for node in diagram.nodes %}
+    <g class="node {{ 'emphasis' if node.emphasis }}">
+      <rect x="{{ node.x }}" y="{{ node.y }}" width="{{ node.width }}" height="34"/>
+      <text class="label" x="{{ node.x + 10 }}" y="{{ node.y + 15 }}">
+        {{ node.label if node.label | length <= 24 else node.label[:23] ~ '…' }}
+      </text>
+      <text class="sub" x="{{ node.x + 10 }}" y="{{ node.y + 27 }}">{{ node.sublabel }}</text>
+      {% if node.href %}<a href="{{ node.href }}"><rect x="{{ node.x }}" y="{{ node.y }}" width="{{ node.width }}" height="34" fill="transparent"/></a>{% endif %}
+    </g>
+  {% endfor %}
+</svg>

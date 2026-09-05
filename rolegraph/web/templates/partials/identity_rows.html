@@ -1,0 +1,30 @@
+{% from "partials/macros.html" import principal_badge %}
+<table>
+  <thead>
+    <tr>
+      <th>Identity</th><th>Type</th><th>Groups</th>
+      <th class="num">Grants</th><th>Broadest scope</th><th class="num">Findings</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <td>
+        <a href="/identities/{{ row.principal.id }}"><strong>{{ row.principal.display_name }}</strong></a>
+        <div class="faint">{{ row.principal.subtitle }}</div>
+      </td>
+      <td>{{ principal_badge(row.principal) }}</td>
+      <td class="muted">{{ row.group_count or '—' }}</td>
+      <td class="num">{{ row.grant_count }}</td>
+      <td class="muted">{{ row.top_scope }}</td>
+      <td class="num">
+        {% if row.high_findings %}<span class="badge sev-high">{{ row.high_findings }} high</span>
+        {% elif row.finding_count %}<span class="badge count">{{ row.finding_count }}</span>
+        {% else %}<span class="faint">—</span>{% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6"><div class="empty">No identities match that search.</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>

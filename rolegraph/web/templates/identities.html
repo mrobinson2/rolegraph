@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Identities &middot; RoleGraph{% endblock %}
+{% block content %}
+<h1>Identity explorer</h1>
+<p class="lede">Search every user, group, service principal and managed identity in the snapshot.
+Open one to see what it can reach, whether the access is direct or inherited, and the exact path
+that grants it.</p>
+
+<div class="toolbar">
+  <input type="search" name="q" value="{{ query }}" placeholder="Search by name, UPN, email, department or id…"
+         hx-get="/identities" hx-trigger="keyup changed delay:200ms, search"
+         hx-target="#identity-results" hx-include="[name='type']" autofocus>
+  <select name="type" hx-get="/identities" hx-trigger="change" hx-target="#identity-results" hx-include="[name='q']">
+    <option value="">All types</option>
+    <option value="user" {{ 'selected' if type_filter == 'user' }}>Users</option>
+    <option value="group" {{ 'selected' if type_filter == 'group' }}>Groups</option>
+    <option value="servicePrincipal" {{ 'selected' if type_filter == 'servicePrincipal' }}>Service principals</option>
+    <option value="managedIdentity" {{ 'selected' if type_filter == 'managedIdentity' }}>Managed identities</option>
+  </select>
+  <span class="spinner">Searching…</span>
+  <span class="faint" style="margin-left:auto">{{ rows | length }} of {{ total }} identities</span>
+</div>
+
+<div class="card tight" id="identity-results">
+  {% include "partials/identity_rows.html" %}
+</div>
+{% endblock %}

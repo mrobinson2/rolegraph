@@ -1,0 +1,64 @@
+{
+  "$schema": "rolegraph-import/v1",
+  "notAKnownSection": [{"id": "ignored"}],
+  "tenants": [
+    {"id": "tenant-a", "displayName": "Tenant A"},
+    {"id": "tenant-b", "displayName": "Tenant B"}
+  ],
+  "managementGroups": [
+    {"id": "Root", "displayName": "Root", "parent": "/"},
+    {"id": "Prod", "displayName": "Production", "parent": "Root"},
+    {"id": "Orphan", "displayName": "Orphaned MG", "parent": "DoesNotExist"},
+    {"displayName": "No id at all", "parent": "Root"},
+    {"id": "Root", "displayName": "Duplicate Root", "parent": "/"}
+  ],
+  "subscriptions": [
+    {"subscriptionId": "sub-1", "displayName": "Sub One", "managementGroup": "Prod"},
+    {"subscriptionId": "sub-2", "displayName": "No parent given"}
+  ],
+  "resourceGroups": [
+    {"name": "rg-ok", "subscriptionId": "sub-1"},
+    {"name": "rg-no-sub"}
+  ],
+  "resources": [
+    {"id": "/subscriptions/sub-1/resourceGroups/rg-ok/providers/Microsoft.Storage/storageAccounts/stok", "name": "stok"},
+    {"id": "not-a-scope", "name": "bad-resource"},
+    {"id": "/subscriptions/sub-1", "name": "actually-a-subscription"}
+  ],
+  "roleDefinitions": [
+    {"id": "rd-reader", "roleName": "Reader", "permissions": [{"actions": ["*/read"]}]},
+    {"id": "rd-empty", "roleName": "Empty Role", "permissions": []},
+    {"id": "rd-bad-perms", "roleName": "Bad Permissions", "permissions": "not-a-list"},
+    {"id": "rd-reader", "roleName": "Reader Duplicate", "permissions": [{"actions": ["*/read"]}]},
+    {"roleName": "No Id Role"}
+  ],
+  "users": [
+    {"id": "u-1", "displayName": "Real User"},
+    {"displayName": "User with no id"},
+    "not-an-object"
+  ],
+  "groups": [
+    {"id": "g-1", "displayName": "Group One"},
+    {"id": "g-2", "displayName": "Group Two"}
+  ],
+  "groupMemberships": [
+    {"groupId": "g-1", "memberId": "u-1"},
+    {"groupId": "g-1", "memberId": "u-1"},
+    {"groupId": "g-missing", "memberId": "u-1"},
+    {"groupId": "g-1", "memberId": "u-missing"},
+    {"groupId": "g-1", "memberId": "g-1"},
+    {"groupId": "g-1", "memberId": "g-2"},
+    {"groupId": "g-2", "memberId": "g-1"},
+    {"memberId": "u-1"}
+  ],
+  "roleAssignments": [
+    {"id": "ra-1", "principalId": "u-1", "roleDefinitionId": "rd-reader", "scope": "/subscriptions/sub-1"},
+    {"id": "ra-2", "principalId": "u-1", "roleDefinitionId": "rd-does-not-exist", "scope": "/subscriptions/sub-1"},
+    {"id": "ra-3", "principalId": "u-missing", "roleDefinitionId": "rd-reader", "scope": "/subscriptions/sub-1"},
+    {"id": "ra-4", "principalId": "u-1", "roleDefinitionId": "rd-reader", "scope": "/subscriptions/sub-unknown"},
+    {"id": "ra-5", "principalId": "u-1", "roleDefinitionId": "rd-reader", "scope": "garbage-scope"},
+    {"id": "ra-6", "principalId": "u-1", "roleDefinitionId": "rd-reader", "scope": "/subscriptions/sub-1", "principalType": "ServicePrincipal"},
+    {"id": "ra-1", "principalId": "u-1", "roleDefinitionId": "rd-reader", "scope": "/subscriptions/sub-1"},
+    {"principalId": "u-1", "roleDefinitionId": "rd-reader"}
+  ]
+}

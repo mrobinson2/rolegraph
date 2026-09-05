@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import principal_badge, role_link, directness %}
+{% block title %}Privileged access &middot; RoleGraph{% endblock %}
+{% block content %}
+<h1>Privileged access</h1>
+<p class="lede">Identities holding a role on the privileged list, whether the access is direct or
+arrives through group membership. These are observations for review — an entry here is not by
+itself a problem.</p>
+
+<div class="notice info">
+  Privileged roles are configurable in <code>config/{{ config_file }}</code>. Currently:
+  {% for role in privileged_roles %}<strong>{{ role }}</strong>{% if not loop.last %}, {% endif %}{% endfor %}.
+</div>
+
+<h2>People and applications</h2>
+<div class="card tight">
+<table>
+  <thead><tr><th>Identity</th><th>Type</th><th>Role</th><th>At</th><th>How</th><th></th></tr></thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <td><a href="/identities/{{ row.principal.id }}">{{ row.principal.display_name }}</a>
+        <div class="faint">{{ row.principal.subtitle }}</div></td>
+      <td>{{ principal_badge(row.principal) }}</td>
+      <td>{{ role_link(row.role) }}</td>
+      <td>{{ row.scope_display }}<div class="faint">{{ row.scope_kind }}</div></td>
+      <td>{{ directness(row.is_direct) }}
+        {% if row.via %}<div class="faint">{{ row.via | length }} group level(s)</div>{% endif %}</td>
+      <td><a class="btn small" href="/identities/{{ row.principal.id }}/path/{{ row.path.assignment.id }}?chain={{ row.via | join('>') }}">Path</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6"><div class="empty">No identity holds a privileged role in this snapshot.</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Groups holding privileged roles</h2>
+<p class="faint">Everyone in these groups, including members of nested groups, inherits the role.</p>
+<div class="card tight">
+<table>
+  <thead><tr><th>Group</th><th>Role</th><th>At</th></tr></thead>
+  <tbody>
+  {% for row in group_rows %}
+    <tr>
+      <td><a href="/identities/{{ row.principal.id }}">{{ row.principal.display_name }}</a></td>
+      <td>{{ role_link(row.role) }}</td>
+      <td>{{ row.scope_display }}<div class="faint">{{ row.scope_kind }}</div></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="3"><div class="empty">No group holds a privileged role.</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Why these roles</h2>
+<div class="card">
+  <dl class="kv">
+  {% for role in privileged_roles %}
+    <dt>{{ role }}</dt>
+    <dd>{{ role_notes.get(role | lower, 'Marked privileged in the configuration file.') }}</dd>
+  {% endfor %}
+  </dl>
+</div>
+{% endblock %}

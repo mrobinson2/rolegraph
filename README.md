@@ -40,8 +40,12 @@ python3.12 -m venv .venv
 ### Run the tests
 
 ```bash
-.venv/bin/pytest
+.venv/bin/python -m pytest
 ```
+
+PowerShell 7.4+ enables collector integration tests; otherwise they are skipped.
+See [testing and screenshots](docs/TESTING_AND_SCREENSHOTS.md) for the isolated
+browser journey, screenshot gallery, and complete validation commands.
 
 ---
 
@@ -67,8 +71,8 @@ python3.12 -m venv .venv
 ## Screens
 
 These screenshots show the September 7, 2026 development build with synthetic
-Contoso data—no real tenant or credentials. They preview local UI improvements;
-this documentation-only update does not publish those application changes.
+Contoso data—no real tenant or credentials. The UI improvements and standalone
+collector are included in this repository; live Azure validation remains pending.
 
 ![RoleGraph overview with estate counts and access findings](docs/screenshots/03-overview-1440.png)
 
@@ -95,9 +99,20 @@ role assignments, users, groups, service principals, managed identities and grou
 memberships.
 
 The format is documented in **[docs/IMPORT_SCHEMA.md](docs/IMPORT_SCHEMA.md)**,
-and `data/demo/contoso.json` is a complete worked example. A collection script
-that produces it from Azure CLI or PowerShell is the intended next step; the
-schema was designed so that script can be written without changing anything here.
+and `data/demo/contoso.json` is a complete worked example.
+
+The standalone [PowerShell collector](scripts/collect/Export-RoleGraphDataset.ps1)
+uses existing Azure CLI and Microsoft Graph sessions. Start with a credential-free
+preview:
+
+```powershell
+pwsh -NoProfile -File ./scripts/collect/Export-RoleGraphDataset.ps1 -OutputPath ./tenant.json -DryRun
+```
+
+Follow [the collection guide](docs/COLLECTION.md) for read permissions, live
+collection, optional resource inventory, output-file safeguards and coverage
+limits. Read failures stop the export; collection warnings must be reviewed before
+upload. The script is tested with cloud-response doubles, not a live tenant.
 
 Every import creates a snapshot, so you can load a second dataset and switch back
 without losing the first.
@@ -153,7 +168,8 @@ Everything is an environment variable; nothing is hard-coded.
 
 ## Security
 
-- **No credentials.** The MVP reads offline exports. Nothing connects to Azure.
+- **No application credentials.** The web app reads offline exports. Only the
+  separately invoked collector connects to Azure using the operator's sessions.
 - **No outbound calls.** Enforced by a Content Security Policy and by the absence
   of any HTTP client in the application path. HTMX is vendored locally, so the
   browser fetches nothing from a CDN either.
@@ -200,7 +216,8 @@ rolegraph/findings/   deterministic rules
 rolegraph/storage/    SQLAlchemy models and snapshots
 rolegraph/web/        routes, view models, templates
 data/demo/            the synthetic Contoso tenant
-scripts/              demo dataset generator
+scripts/collect/      standalone read-only PowerShell collector
+scripts/              demo generator and isolated browser/screenshot runner
 tests/                pytest suite
 docs/                 BRIEF, IMPORT_SCHEMA, ARCHITECTURE, HANDOFF
 ```

@@ -6,7 +6,7 @@
 and nothing is sent anywhere. Every import is stored as a snapshot, so you can switch between
 datasets and keep the old one.</p>
 
-{% if error %}<div class="notice error"><strong>Import failed.</strong> {{ error }}</div>{% endif %}
+{% if error %}<div class="notice error" role="alert"><strong>Import failed.</strong> {{ error }}</div>{% endif %}
 
 {% if result %}
   <div class="notice ok">
@@ -61,11 +61,15 @@ datasets and keep the old one.</p>
     <div class="card">
       <h3>Upload an export</h3>
       <form method="post" action="/import/upload" enctype="multipart/form-data">
-        <p><input type="file" name="file" accept="application/json,.json" required></p>
-        <p class="faint">JSON only, up to {{ max_upload_mb }} MB. The file is validated against the
+        <p><label for="dataset-file">Dataset JSON file</label><br>
+          <input id="dataset-file" type="file" name="file" accept="application/json,.json" aria-describedby="upload-help" required></p>
+        <p class="faint" id="upload-help">JSON only, up to {{ max_upload_mb }} MB. The file is validated against the
           import schema before anything is stored. See <code>docs/IMPORT_SCHEMA.md</code>.</p>
         <button class="btn primary" type="submit">Import file</button>
       </form>
+      <p class="faint">Need an export? Use <code>scripts/collect/Export-RoleGraphDataset.ps1</code>
+        with the permissions and dry-run instructions in <code>docs/COLLECTION.md</code>.
+        Review its collection warnings before importing; they describe coverage the app cannot verify.</p>
       <hr style="border:none;border-top:1px solid var(--border);margin:18px 0">
       <h3>Or load the demo tenant</h3>
       <p class="faint">A synthetic Contoso tenant with deliberately imperfect RBAC. No real data.</p>

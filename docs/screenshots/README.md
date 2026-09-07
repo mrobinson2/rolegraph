@@ -1,9 +1,9 @@
 # RoleGraph screenshots
 
 Captured September 7, 2026 from the development build using the synthetic
-Contoso dataset. No real Azure tenant was accessed. These images preview local
-UI polish; the accompanying publication is documentation-only, not a release of
-the collector or application changes.
+Contoso dataset. No real Azure tenant was accessed. The UI improvements and
+standalone collector are included in the repository; live Azure validation
+remains pending.
 
 All 27 captures passed the automated browser/layout checks. The
 [capture manifest](manifest.json) records the browser version, routes and viewports.

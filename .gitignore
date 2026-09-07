@@ -9,3 +9,7 @@ data/*.db
 data/*.sqlite3
 data/uploads/
 .env
+.codegraph/
+.tools/
+artifacts/
+/tenant.json

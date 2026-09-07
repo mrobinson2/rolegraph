@@ -5,17 +5,16 @@
 <p class="lede">Every built-in and custom role definition in the snapshot, what it permits, and who
 holds it. Custom roles are listed first because they are the ones nobody else has reviewed.</p>
 
-<div class="toolbar">
-  <input type="search" name="q" value="{{ query }}" placeholder="Search roles by name or description…"
-         hx-get="/roles" hx-trigger="keyup changed delay:200ms, search" hx-target="#role-results"
+<div class="toolbar" hx-sync="this:replace" hx-indicator="#role-spinner">
+  <input type="search" name="q" value="{{ query }}" placeholder="Search roles by name or description…" aria-label="Search roles"
+         hx-get="/roles" hx-trigger="input changed delay:200ms, search" hx-target="#role-results"
          hx-include="[name='type']">
-  <select name="type" hx-get="/roles" hx-trigger="change" hx-target="#role-results" hx-include="[name='q']">
+  <select name="type" aria-label="Role type" hx-get="/roles" hx-trigger="change" hx-target="#role-results" hx-include="[name='q']">
     <option value="">All roles</option>
     <option value="custom" {{ 'selected' if type_filter == 'custom' }}>Custom only</option>
     <option value="builtin" {{ 'selected' if type_filter == 'builtin' }}>Built-in only</option>
   </select>
-  <span class="spinner">Searching…</span>
-  <span class="faint" style="margin-left:auto">{{ rows | length }} of {{ total }} roles &middot; {{ custom_total }} custom</span>
+  <span class="spinner" id="role-spinner">Searching…</span>
 </div>
 
 <div class="card tight" id="role-results">

@@ -4,8 +4,12 @@ Written for an AI coding agent (Codex or similar) picking this repository up
 cold. Read this, then `docs/BRIEF.md` (the product spec, authoritative) and
 `docs/ARCHITECTURE.md` (why the code is shaped the way it is).
 
-Last verified: 163 tests passing, MVP definition of done passing end to end in
-Docker, at commit `48d4e38` on `main`.
+Last verified: September 7, 2026 — 181 tests passing with PowerShell enabled;
+the isolated Chrome browser journey passed and produced 27 desktop/mobile/tablet
+screenshots. This update adds the standalone collector and UI polish.
+Live Azure collection remains unverified. The earlier MVP Docker verification was
+at commit `48d4e38`; Docker was not rerun for this update. Reproduce current checks
+with `docs/TESTING_AND_SCREENSHOTS.md`.
 
 ---
 
@@ -25,7 +29,7 @@ outbound network calls.
 cd rolegraph
 python3.12 -m venv .venv
 .venv/bin/pip install -e ".[dev]"
-.venv/bin/pytest                                    # 163 tests, ~1.2s
+.venv/bin/python -m pytest                         # collector tests need pwsh
 .venv/bin/uvicorn rolegraph.web.app:app --port 8000
 ```
 
@@ -84,8 +88,10 @@ product promises that a reviewer will catch.
    request path, ever. The CSP in `web/app.py` enforces it browser-side and
    `htmx.min.js` is vendored locally for the same reason. This is a core sales
    claim, not a nicety.
-2. **No credentials, anywhere.** The MVP reads offline exports only. Do not add
-   an Azure SDK dependency without an explicit decision to build connected mode.
+2. **No application credentials.** The app reads offline exports only. The
+   standalone `scripts/collect/Export-RoleGraphDataset.ps1` uses operator-managed
+   Graph/CLI sessions outside the web process. Do not add Azure SDK dependencies
+   to the application without an explicit decision to build connected mode.
 3. **Findings are deterministic.** Same snapshot in, byte-identical list out.
    No scoring, no likelihood estimates, no model calls. `severity` is a fixed
    label on the rule. `test_evaluation_is_deterministic` guards this.
@@ -119,8 +125,9 @@ product promises that a reviewer will catch.
   (identity, role, scope) triples. Do not "fix" the duplication.
 - **Port 8000 is frequently already bound** on a dev machine. Compose honours
   `ROLEGRAPH_PORT`.
-- **`docker compose` uses a named volume** (`rolegraph-data`). To test the
-  first-run experience you must `docker volume rm rolegraph_rolegraph-data`.
+- **`docker compose` uses a named volume** (`rolegraph-data`). Do not delete it
+  just to test first-run behavior. The screenshot runner uses a disposable SQLite
+  database and separate loopback server without touching existing snapshots.
 - **`_grants_write` in `findings/rules.py` is a suffix heuristic**, not real
   action semantics. It is correct on every built-in role checked so far. If you
   build a proper action model, that function is the first consumer.
@@ -193,7 +200,9 @@ hit these:
 
 6. **No authentication.** Anyone who can reach the port reads everything. Entra ID
    sign-in is the intended path and the app is structured for it.
-7. **No collection script** — users must produce the JSON themselves.
+7. **Collector needs live-tenant acceptance.** It exists with dry-run, failure
+   safeguards and mocked integration tests. Review `docs/COLLECTION.md`, especially
+   subscription-cache coverage and `$collection` warnings (not shown by the importer).
 8. **Performance is unmeasured above demo scale** (73 records).
    `principals_with_access_to` scans every identity per scope page and will be the
    first thing to feel slow. `membership_paths` truncates silently at 500 paths /
@@ -203,31 +212,33 @@ hit these:
 10. **The relationship diagram truncates at 12 rows per column** with no
     indication to the viewer.
 
-## 8. The next three pieces of work
+## 8. Collection delivered; follow-on work
 
-Build them in this order. The ordering is deliberate and is the main reason this
-document exists.
+The collection implementation is delivered. The next implementation priorities
+remain snapshot comparison and RBAC correctness; neither is included in this update.
 
-### 1. The collection script — do this first
+### 1. The collection script — implemented, live validation next
 
-An Azure CLI or PowerShell script that reads a tenant with least privilege
-(`Reader` on the management group root plus `Directory.Read.All`) and emits
-`docs/IMPORT_SCHEMA.md` shape.
+`scripts/collect/Export-RoleGraphDataset.ps1` uses Azure CLI reads plus Graph GETs,
+checks tenant agreement and emits all twelve schema arrays. It preserves direct
+membership edges, including service-principal `memberOf` supplementation; do not
+replace them with flattened `transitiveMembers`, which loses explanatory paths.
 
-Suggested home: `scripts/collect/Export-RoleGraphDataset.ps1` plus an `az`-based
-equivalent. The commands map almost one-to-one onto the schema sections —
-`az account management-group list`, `az account list`, `az group list`,
-`az role definition list`, `az role assignment list --all`, and Microsoft Graph
-for users, groups, service principals and `transitiveMembers`.
+`-DryRun` needs no credentials and performs no cloud calls or file writes. Live
+collection writes only its requested JSON; authentication dependencies may maintain
+their own caches, so this is not an OS sandbox. The final write is not atomic.
+Read failures preserve an existing output, but interrupted writes may not. See
+`docs/COLLECTION.md` for the exact contract, permission requirements and warnings.
 
-Why first: every other improvement makes a better answer to a question nobody can
-currently ask about their own environment. It is also the cheapest of the three —
-the schema was designed for this, so it is a mapping exercise, not a design one.
-And the first real export will teach you more about the schema's weaknesses than
-another week of synthetic fixtures.
+Tests execute the actual PowerShell collector and Python importer against mocked
+cloud responses. An approved real tenant is still needed to validate live API
+behavior and inventory coverage. No real credentials or tenant connections were
+used in this implementation.
 
-Ship it with a `--dry-run` that prints what it would read, and make it refuse to
-write anything outside the output file.
+UI polish is also delivered: responsive navigation, locally scrolling tables and
+diagrams, readable SVG links, live result counts and keyboard/accessibility basics.
+`scripts/capture_screenshots.mjs` exercises a disposable demo app and produces a
+review gallery; instructions are in `docs/TESTING_AND_SCREENSHOTS.md`.
 
 ### 2. Snapshot comparison — "what changed since last scan"
 

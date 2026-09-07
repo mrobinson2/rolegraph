@@ -146,6 +146,24 @@ def test_identity_search_partial_returns_a_fragment_for_htmx(loaded):
     response = loaded.get("/identities?q=dan", headers={"HX-Request": "true"})
     assert "<html" not in response.text
     assert "Dan Okafor" in response.text
+    assert 'role="status"' in response.text
+    assert "1 of 16 identities" in response.text
+
+
+def test_role_search_partial_includes_updated_count(loaded):
+    body = loaded.get("/roles?q=Legacy-Auditor", headers={"HX-Request": "true"}).text
+    assert "<html" not in body
+    assert 'role="status"' in body
+    assert "1 of 9 roles" in body
+
+
+def test_explorers_have_labeled_controls_and_keyboard_navigation(loaded):
+    for route, label in [("identities", "identities"), ("roles", "roles")]:
+        body = loaded.get(f"/{route}").text
+        assert f'aria-label="Search {label}"' in body
+        assert 'aria-label="Primary navigation"' in body
+        assert 'href="#main-content"' in body
+        assert 'aria-current="page"' in body
 
 
 def test_identity_type_filter(loaded):

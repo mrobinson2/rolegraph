@@ -8,20 +8,17 @@
   <script src="/static/htmx.min.js" defer></script>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
 <header class="topbar">
   <a class="brand" href="/">Role<span>Graph</span></a>
   <span class="tagline">See who has access to what &mdash; and exactly why.</span>
-  <nav class="main">
-    <a href="/" class="{{ 'active' if nav == 'overview' }}">Overview</a>
-    <a href="/identities" class="{{ 'active' if nav == 'identities' }}">Identities</a>
-    <a href="/roles" class="{{ 'active' if nav == 'roles' }}">Roles</a>
-    <a href="/scopes" class="{{ 'active' if nav == 'scopes' }}">Scopes</a>
-    <a href="/privileged" class="{{ 'active' if nav == 'privileged' }}">Privileged</a>
-    <a href="/findings" class="{{ 'active' if nav == 'findings' }}">Findings</a>
-    <a href="/import" class="{{ 'active' if nav == 'import' }}">Import</a>
+  <nav class="main" aria-label="Primary navigation">
+    {% for key, label, href in [('overview', 'Overview', '/'), ('identities', 'Identities', '/identities'), ('roles', 'Roles', '/roles'), ('scopes', 'Scopes', '/scopes'), ('privileged', 'Privileged', '/privileged'), ('findings', 'Findings', '/findings'), ('import', 'Import', '/import')] %}
+    <a href="{{ href }}" {% if nav == key %}class="active" aria-current="page"{% endif %}>{{ label }}</a>
+    {% endfor %}
   </nav>
 </header>
-<main>
+<main id="main-content" tabindex="-1">
   {% block content %}{% endblock %}
   <footer class="foot">
     {% if snapshot %}

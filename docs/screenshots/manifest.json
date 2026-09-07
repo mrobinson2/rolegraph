@@ -1,0 +1,360 @@
+{
+  "passed": true,
+  "capturedAt": "2026-09-07T19:49:28.282Z",
+  "browser": "152.0.7977.76",
+  "dataset": "data/demo/contoso.json",
+  "captures": [
+    {
+      "file": "01-empty-1440.png",
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "01-empty-390.png",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "02-imported-1440.png",
+      "route": "/import/demo",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "02-imported-390.png",
+      "route": "/import/demo",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "03-overview-1440.png",
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "03-overview-390.png",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "04-search-1440.png",
+      "route": "/identities",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "04-search-390.png",
+      "route": "/identities",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "05-identity-1440.png",
+      "route": "/identities/u-1a2b3c4d-jane",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "05-identity-390.png",
+      "route": "/identities/u-1a2b3c4d-jane",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "05-identity-768.png",
+      "route": "/identities/u-1a2b3c4d-jane",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "layout": {
+        "viewport": 768,
+        "document": 768,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "06-access-path-1440.png",
+      "route": "/identities/u-1a2b3c4d-jane/path/ra-0001",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "06-access-path-390.png",
+      "route": "/identities/u-1a2b3c4d-jane/path/ra-0001",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "07-findings-1440.png",
+      "route": "/findings",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "07-findings-390.png",
+      "route": "/findings",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "08-roles-1440.png",
+      "route": "/roles",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "08-roles-390.png",
+      "route": "/roles",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "09-role-detail-1440.png",
+      "route": "/roles//providers/Microsoft.Authorization/roleDefinitions/e90c1b44-2a55-4f8e-9d33-71bb4c9f0a10",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "09-role-detail-390.png",
+      "route": "/roles//providers/Microsoft.Authorization/roleDefinitions/e90c1b44-2a55-4f8e-9d33-71bb4c9f0a10",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "10-scopes-1440.png",
+      "route": "/scopes",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "10-scopes-390.png",
+      "route": "/scopes",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "11-privileged-1440.png",
+      "route": "/privileged",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "11-privileged-390.png",
+      "route": "/privileged",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "12-no-results-1440.png",
+      "route": "/identities",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "12-no-results-390.png",
+      "route": "/identities",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "13-import-error-1440.png",
+      "route": "/import/upload",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "layout": {
+        "viewport": 1440,
+        "document": 1440,
+        "clippedNav": false
+      }
+    },
+    {
+      "file": "13-import-error-390.png",
+      "route": "/import/upload",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "clippedNav": false
+      }
+    }
+  ],
+  "failures": []
+}

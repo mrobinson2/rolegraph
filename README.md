@@ -66,6 +66,14 @@ python3.12 -m venv .venv
 
 ## Screens
 
+These screenshots show the September 7, 2026 development build with synthetic
+Contoso data—no real tenant or credentials. They preview local UI improvements;
+this documentation-only update does not publish those application changes.
+
+![RoleGraph overview with estate counts and access findings](docs/screenshots/03-overview-1440.png)
+
+[Browse all 27 desktop, mobile and tablet screenshots](docs/screenshots/README.md).
+
 | Screen | What it answers |
 |---|---|
 | **Overview** | How big is the estate, and what should I look at first? |

@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "ApprovedAssignment": {
+      "additionalProperties": false,
+      "properties": {
+        "principalId": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Principalid",
+          "type": "string"
+        },
+        "roleDefinitionId": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Roledefinitionid",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "maxLength": 32768,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "conditionVersion": {
+          "anyOf": [
+            {
+              "const": "2.0",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conditionversion"
+        },
+        "delegatedManagedIdentityResourceId": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delegatedmanagedidentityresourceid"
+        },
+        "principalName": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Principalname"
+        },
+        "roleName": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rolename"
+        },
+        "justification": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Justification"
+        }
+      },
+      "required": [
+        "principalId",
+        "roleDefinitionId",
+        "scope"
+      ],
+      "title": "ApprovedAssignment",
+      "type": "object"
+    },
+    "Permission": {
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Actions",
+          "type": "array"
+        },
+        "notActions": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Notactions",
+          "type": "array"
+        },
+        "dataActions": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Dataactions",
+          "type": "array"
+        },
+        "notDataActions": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Notdataactions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "actions",
+        "notActions",
+        "dataActions",
+        "notDataActions"
+      ],
+      "title": "Permission",
+      "type": "object"
+    },
+    "PinnedRole": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/Permission"
+          },
+          "minItems": 1,
+          "title": "Permissions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "permissions"
+      ],
+      "title": "PinnedRole",
+      "type": "object"
+    },
+    "ScanScope": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "includeDescendants": {
+          "default": true,
+          "title": "Includedescendants",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ScanScope",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "$Schema"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "tenantId": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Tenantid",
+      "type": "string"
+    },
+    "scopes": {
+      "items": {
+        "$ref": "#/$defs/ScanScope"
+      },
+      "minItems": 1,
+      "title": "Scopes",
+      "type": "array"
+    },
+    "assignments": {
+      "items": {
+        "$ref": "#/$defs/ApprovedAssignment"
+      },
+      "title": "Assignments",
+      "type": "array"
+    },
+    "roleDefinitions": {
+      "items": {
+        "$ref": "#/$defs/PinnedRole"
+      },
+      "title": "Roledefinitions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "tenantId",
+    "scopes",
+    "assignments"
+  ],
+  "title": "TargetState",
+  "type": "object"
+}

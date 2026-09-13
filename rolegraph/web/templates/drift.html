@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}RBAC drift &middot; RoleGraph{% endblock %}
+{% block content %}
+<h1>RBAC drift</h1>
+<p class="lede">Compare the permissions approved in your repository with a recent Azure RBAC scan.</p>
+<div class="card">
+  <form method="post" action="/drift/compare" enctype="multipart/form-data">
+    <p><label for="target-files">Approved target JSON files</label><br>
+      <input id="target-files" type="file" name="targets" accept="application/json,.json" multiple required></p>
+    <p><label for="observed-file">Observed state from a scan</label><br>
+      <input id="observed-file" type="file" name="observed" accept="application/json,.json" aria-describedby="drift-upload-help" required></p>
+    <p class="faint" id="drift-upload-help">Use the observed.json file from your scheduled scan, collected within the last 36 hours.
+      Comparison runs locally. Your files are not saved as an approval or imported as a snapshot.</p>
+    <button type="submit" class="btn primary">Compare permissions</button>
+  </form>
+</div>
+{% if report %}
+  <h2>{{ status_label }}</h2>
+  {% if report.status == 'error' %}
+    <div class="notice error" role="alert">The comparison could not complete. No compliance conclusion is available.</div>
+    <pre class="scope-id">{{ report.error }}</pre>
+  {% else %}
+    <div class="notice {{ 'ok' if report.status == 'in-sync' else 'warn' }}" role="status">
+      {{ report.summary.approvedAssignments }} approved assignments &middot;
+      {{ report.summary.observedAssignments }} observed assignments &middot;
+      {{ rows | length }} differences
+    </div>
+    {% if rows %}
+    <div class="card tight">
+      <table>
+        <thead><tr><th>Difference</th><th>Identity and role</th><th>Originating scope</th><th>Evidence</th></tr></thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td>{{ row.label }}</td>
+            <td>{{ row.identity }}<div class="muted">{{ row.role }}</div></td>
+            <td class="scope-id">{{ row.scope }}</td>
+            <td><details><summary>View details</summary><pre class="scope-id">{{ row.evidence }}</pre></details></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p>The observed assignments match the approved target within the declared coverage.</p>
+    {% endif %}
+    <p class="faint">Collected {{ report.collectedAt }}. Target fingerprint <span class="scope-id">{{ report.target.sha256 }}</span>.</p>
+  {% endif %}
+{% endif %}
+<h2>What this comparison covers</h2>
+<p>Assignments to users, groups, service principals and managed identities are checked by identity, role and originating scope.
+  Removed or changed conditions are reported. Inherited assignments are reviewed at the scope where they were granted.</p>
+<p class="faint">Group membership changes, PIM eligibility and deny assignments are outside this comparison.
+  Changes to role permissions are checked for roles pinned in the approved files. This is an assignment review, not a calculation of effective actions.</p>
+{% endblock %}

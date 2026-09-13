@@ -32,6 +32,8 @@ Live acceptance is separate: collect an approved test tenant using
 [COLLECTION.md](COLLECTION.md), compare known assignments and nested paths with
 Azure, and confirm intentionally unavailable reads fail without replacing an
 existing export. Do not run live collection against production as a casual test.
+The full three-tenant procedure, cross-checks and results template are in
+[LIVE_TENANT_VALIDATION.md](LIVE_TENANT_VALIDATION.md).
 
 ## Automated browser journey and screenshots
 

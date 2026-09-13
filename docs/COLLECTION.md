@@ -124,6 +124,8 @@ The automated collector suite executes real PowerShell serialization, paging,
 normalization, filesystem safeguards and the actual Python importer against
 cloud-response doubles. **No live Azure tenant was accessed for this build.**
 Follow [TESTING_AND_SCREENSHOTS.md](TESTING_AND_SCREENSHOTS.md) to reproduce it.
+The three-tenant live acceptance campaign is sequenced in
+[LIVE_TENANT_VALIDATION.md](LIVE_TENANT_VALIDATION.md).
 
 Implementation references: [Graph group members and service-principal caveat](https://learn.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0),
 [management hierarchy entities](https://learn.microsoft.com/en-us/rest/api/managementgroups/entities/list?view=rest-managementgroups-2020-05-01),

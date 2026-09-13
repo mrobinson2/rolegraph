@@ -1,0 +1,54 @@
+# Azure DevOps Services alternative to .github/workflows/rbac-drift.yml.
+# Create this pipeline in a private project and define AzureRbacReadConnection
+# as the name of an ARM service connection using workload identity federation.
+trigger: none
+pr: none
+
+schedules:
+  - cron: '23 */12 * * *' # UTC; use '23 0 * * *' for every 24 hours.
+    displayName: RBAC every 12 hours
+    branches:
+      include: [main]
+    always: true # Scan even when the approved files have not changed.
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: RbacDrift
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    timeoutInMinutes: 45
+    steps:
+      - checkout: self
+        clean: true
+        persistCredentials: false
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.12'
+      - script: python -m pip install .
+        displayName: Install RoleGraph
+      - script: python -m rolegraph.drift validate --target rbac/approved
+        displayName: Validate approved target files
+      - task: AzureCLI@2
+        displayName: Read Azure and compare approved state
+        inputs:
+          azureSubscription: $(AzureRbacReadConnection)
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: python scripts/scan_rbac.py --target rbac/approved --output-dir artifacts/rbac --revision "$BUILD_SOURCEVERSION"
+          visibleAzLogin: false
+          failOnStandardError: false
+      - bash: |
+          if [ -f artifacts/rbac/report.md ]; then
+            echo "##vso[task.uploadsummary]$(System.DefaultWorkingDirectory)/artifacts/rbac/report.md"
+          else
+            echo 'RBAC scan did not complete. Review setup, validation or authentication failures.'
+          fi
+        displayName: Job summary
+        condition: always()
+      - task: PublishPipelineArtifact@1
+        displayName: Retain scan evidence
+        condition: and(always(), ne(variables['Agent.JobStatus'], 'Canceled'))
+        inputs:
+          targetPath: artifacts/rbac
+          artifact: rbac-$(Build.BuildId)

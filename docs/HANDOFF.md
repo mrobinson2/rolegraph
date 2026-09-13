@@ -11,6 +11,18 @@ Live Azure collection remains unverified. The earlier MVP Docker verification wa
 at commit `48d4e38`; Docker was not rerun for this update. Reproduce current checks
 with `docs/TESTING_AND_SCREENSHOTS.md`.
 
+The repository-approved target state enhancement adds `rolegraph/drift/`, the
+standalone `scripts/scan_rbac.py`, offline `/drift` review, strict JSON schemas,
+and 12/24-hour GitHub Actions/Azure DevOps definitions. Start with
+`docs/RBAC_TARGET_STATE.md`. Its raw observations preserve conditions and must not
+be replaced by the permissive snapshot importer. Deployment configuration and
+live-tenant acceptance remain pending; no scan schedule has been activated.
+The selected deployment is GitHub Actions every 12 hours (00:23 and 12:23 UTC).
+The production target JSON files and Azure federated identity still need configuration.
+The enhancement was locally verified with 247 passing tests (PowerShell enabled),
+Actionlint, and desktop/mobile checks against a running Uvicorn server. The
+verification commands and limits are recorded in `docs/RBAC_TARGET_STATE.md`.
+
 ---
 
 ## 1. What this is in one paragraph

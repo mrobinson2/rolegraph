@@ -14,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from ..config import get_settings
+from .routes import drift as drift_routes
 from .routes import findings as findings_routes
 from .routes import identities as identity_routes
 from .routes import imports as import_routes
@@ -57,6 +58,7 @@ def create_app() -> FastAPI:
     app.include_router(findings_routes.router)
     app.include_router(scope_routes.router)
     app.include_router(import_routes.router)
+    app.include_router(drift_routes.router)
 
     @app.exception_handler(NoDataset)
     async def no_dataset(request: Request, _exc: NoDataset) -> HTMLResponse:

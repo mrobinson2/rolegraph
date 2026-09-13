@@ -13,7 +13,7 @@
   <a class="brand" href="/">Role<span>Graph</span></a>
   <span class="tagline">See who has access to what &mdash; and exactly why.</span>
   <nav class="main" aria-label="Primary navigation">
-    {% for key, label, href in [('overview', 'Overview', '/'), ('identities', 'Identities', '/identities'), ('roles', 'Roles', '/roles'), ('scopes', 'Scopes', '/scopes'), ('privileged', 'Privileged', '/privileged'), ('findings', 'Findings', '/findings'), ('import', 'Import', '/import')] %}
+    {% for key, label, href in [('overview', 'Overview', '/'), ('identities', 'Identities', '/identities'), ('roles', 'Roles', '/roles'), ('scopes', 'Scopes', '/scopes'), ('privileged', 'Privileged', '/privileged'), ('findings', 'Findings', '/findings'), ('drift', 'RBAC drift', '/drift'), ('import', 'Import', '/import')] %}
     <a href="{{ href }}" {% if nav == key %}class="active" aria-current="page"{% endif %}>{{ label }}</a>
     {% endfor %}
   </nav>

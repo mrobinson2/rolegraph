@@ -1,0 +1,35 @@
+name: Validate RBAC targets
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install '.[dev]'
+      - run: python -m pytest tests/test_drift.py tests/test_rbac_scan.py tests/test_drift_web.py
+      - run: python -m rolegraph.drift validate --target rbac/examples/approved-state.json
+      - name: Validate production targets when configured
+        env:
+          RBAC_DRIFT_ENABLED: ${{ vars.RBAC_DRIFT_ENABLED }}
+        shell: bash
+        run: |
+          if [ "$RBAC_DRIFT_ENABLED" = true ] || [ -n "$(find rbac/approved -name '*.json' -print -quit)" ]; then
+            python -m rolegraph.drift validate --target rbac/approved
+          else
+            echo 'Production target files have not been configured.'
+          fi

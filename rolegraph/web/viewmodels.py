@@ -348,3 +348,21 @@ def overview(graph: AccessGraph, findings: list[Finding], snapshot) -> dict:
         "high_findings": privileged,
         "top_findings": findings[:6],
     }
+
+
+def drift_view(report: dict | None = None) -> dict:
+    """Shape an offline drift comparison without using permissive snapshots."""
+    import json
+
+    labels = {"missing": "Approved assignment missing", "unexpected": "Unapproved assignment",
+              "changed": "Assignment conditions changed", "duplicate": "Duplicate grant",
+              "role-definition-changed": "Role permissions changed"}
+    rows = []
+    for finding in (report or {}).get("findings", []):
+        rows.append({"label": labels[finding["kind"]],
+                     "identity": finding.get("principalName") or finding.get("principalId", "Role definition"),
+                     "role": finding.get("roleName") or finding["roleDefinitionId"],
+                     "scope": finding.get("scope", "—"), "evidence": json.dumps(finding, indent=2, ensure_ascii=False)})
+    return {"nav": "drift", "report": report, "rows": rows,
+            "status_label": {"in-sync": "Approved assignments match", "drift": "Permission differences found",
+                             "error": "Comparison incomplete"}.get((report or {}).get("status"), "")}

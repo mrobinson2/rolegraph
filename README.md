@@ -87,6 +87,7 @@ collector are included in this repository; live Azure validation remains pending
 | **Scopes** | Who can reach this subscription or resource, and is it inherited? |
 | **Privileged access** | Who holds Owner, Contributor or User Access Administrator? |
 | **Findings** | What is worth reviewing, and why? |
+| **RBAC drift** | Does a recent scan match the assignments approved in the repository? |
 | **Import** | Load a dataset, review warnings, switch between snapshots. |
 
 ---
@@ -116,6 +117,24 @@ upload. The script is tested with cloud-response doubles, not a live tenant.
 
 Every import creates a snapshot, so you can load a second dataset and switch back
 without losing the first.
+
+## Approved RBAC target state
+
+Define approved assignments in repository JSON files and compare them with Azure
+every 12 hours using GitHub Actions. The standalone scanner produces JSON and Markdown reports
+for missing, unexpected, changed and duplicate assignments, and permission changes
+in pinned roles. GitHub Actions and Azure DevOps pipeline definitions are included.
+
+Try the synthetic example without Azure:
+
+```bash
+.venv/bin/python scripts/demo_rbac_drift.py --output-dir artifacts/rbac-demo
+```
+
+Open **RBAC drift** to compare the example approved file with the generated
+`observed.json`. Follow [the target state and scheduling guide](docs/RBAC_TARGET_STATE.md)
+for JSON authoring, federated read access, pipeline setup and coverage limits.
+Live scheduling requires deployment configuration; no production target is shipped.
 
 ---
 
@@ -213,10 +232,14 @@ rolegraph/domain/     entities, scope model, hierarchy - pure Python
 rolegraph/importer/   schema validation and normalization
 rolegraph/resolver/   group membership and effective access
 rolegraph/findings/   deterministic rules
+rolegraph/drift/      strict target state validation and offline comparison
 rolegraph/storage/    SQLAlchemy models and snapshots
 rolegraph/web/        routes, view models, templates
 data/demo/            the synthetic Contoso tenant
 scripts/collect/      standalone read-only PowerShell collector
+rbac/                 approved target files and synthetic examples
+schemas/              target state and observation JSON schemas
+pipelines/            Azure DevOps scheduled RBAC pipeline
 scripts/              demo generator and isolated browser/screenshot runner
 tests/                pytest suite
 docs/                 BRIEF, IMPORT_SCHEMA, ARCHITECTURE, HANDOFF

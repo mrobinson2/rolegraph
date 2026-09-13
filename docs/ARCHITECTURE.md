@@ -118,8 +118,20 @@ identity; it is deliberately not a whole-tenant graph explorer.
 
 ## What was deliberately left out
 
-Authentication, multi-tenancy, licensing, background collection, scheduling and
-snapshot diffing are all absent. The seams are in place — snapshots exist, config
+### Repository-approved target state (September 2026 enhancement)
+
+`rolegraph/drift/` provides a strict target/observation contract and deterministic
+comparison. `scripts/scan_rbac.py` is a standalone Azure CLI collector; cloud
+authentication and scheduling remain in the pipeline, outside the web process.
+The `/drift` page compares uploaded raw observations without using the permissive
+snapshot importer, which currently does not preserve assignment conditions.
+No schema migration, external application dependency or scheduler service is added.
+See [RBAC_TARGET_STATE.md](RBAC_TARGET_STATE.md) for decisions and deployment steps.
+
+### Other deferred capabilities
+
+Authentication, multi-tenancy, licensing, in-app background collection and
+snapshot-to-snapshot diffing are absent. The seams are in place — snapshots exist, config
 is external, storage is abstracted — but building them now would slow down the
 one thing the MVP has to prove: that the explanation is good enough to be worth
 paying for.
